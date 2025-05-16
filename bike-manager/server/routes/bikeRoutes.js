@@ -5,29 +5,20 @@ const {
   addBike,
   getBikes,
   checkAndUpdateBikeStatus,
-  getFinanceStats
+  getFinanceStats,
+  recordMonthlyFinance,
+  getMonthlyReports,
 } = require("../controllers/bikeController");
 
-// Log the imported functions to check if they are defined
-console.log({ addBike, getBikes, checkAndUpdateBikeStatus, getFinanceStats });
+// ✅ These paths should be relative to /api/bikes
 
-// Add a new bike
-router.post("/bikes", addBike);
+router.post("/add", addBike); // Final route: /api/bikes/add
+router.get("/", getBikes);    // Final route: /api/bikes
+router.patch("/expiry-check", checkAndUpdateBikeStatus); // /api/bikes/expiry-check
 
-// Get all bikes
-router.get("/bikes", getBikes);
-
-// Update gifted bikes (24+ months)
-router.patch("/bikes/expiry-check", checkAndUpdateBikeStatus);
-
-// Get financial stats
+// Finance routes (if you separate them later, move to /api/finance)
 router.get("/finance", getFinanceStats);
-
-module.exports = router;
-
-const { recordMonthlyFinance } = require("../controllers/bikeController");
 router.post("/finance/record", recordMonthlyFinance);
-
-const { getMonthlyReports } = require("../controllers/bikeController");
 router.get("/finance/reports", getMonthlyReports);
 
+module.exports = router;
