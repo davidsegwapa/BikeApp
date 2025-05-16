@@ -10,15 +10,13 @@ const {
   getMonthlyReports,
 } = require("../controllers/bikeController");
 
-// ✅ These paths should be relative to /api/bikes
-
-router.post("/add", addBike); // Final route: /api/bikes/add
-router.get("/", getBikes);    // Final route: /api/bikes
-router.patch("/expiry-check", checkAndUpdateBikeStatus); // /api/bikes/expiry-check
-
-// Finance routes (if you separate them later, move to /api/finance)
-router.get("/finance", getFinanceStats);
-router.post("/finance/record", recordMonthlyFinance);
-router.get("/finance/reports", getMonthlyReports);
+// ✅ THESE are correct paths:
+router.post("/add", addBike); // POST /api/bikes/add
+router.get("/", getBikes); // GET /api/bikes
+router.patch("/expiry-check", checkAndUpdateBikeStatus); // PATCH /api/bikes/expiry-check
+router.get("/finance", getFinanceStats); // GET /api/bikes/finance
+router.post("/finance/record", recordMonthlyFinance); // POST /api/bikes/finance/record
+router.get("/finance/reports", getMonthlyReports); // GET /api/bikes/finance/reports
 
 module.exports = router;
+
