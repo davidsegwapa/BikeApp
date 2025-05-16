@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bike Manager Dashboard</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    h1 { margin-bottom: 20px; }
+    .stats { display: flex; gap: 30px; margin-bottom: 30px; }
+    .stat { background: #eee; padding: 15px; border-radius: 8px; }
+    canvas { max-width: 600px; }
+  </style>
+</head>
+<body>
+
+  <h1>📊 Bike Manager Dashboard</h1>
+
+  <div class="stats">
+    <div class="stat" id="activeBikes">Active Bikes: ...</div>
+    <div class="stat" id="giftedBikes">Gifted Bikes: ...</div>
+    <div class="stat" id="savings">Savings: R...</div>
+  </div>
+
+  <canvas id="financeChart"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const loading = document.createElement("p");
+    loading.innerText = "Loading data...";
+    document.body.appendChild(loading);
+  
+    async function fetchStats() {
+      try {
+        const resBikes = await fetch('http://localhost:5000/api/bikes');
+        const bikes = await resBikes.json();
+        const active = bikes.filter(b => b.status === "active").length;
+        const gifted = bikes.filter(b => b.status === "gifted").length;
+        document.getElementById("activeBikes").innerText = "Active Bikes: " + active;
+        document.getElementById("giftedBikes").innerText = "Gifted Bikes: " + gifted;
+  
+        const resFinance = await fetch('http://localhost:5000/api/finance/reports');
+        const reports = await resFinance.json();
+        const savings = reports.length > 0 ? reports[reports.length - 1].savings : 0;
+        document.getElementById("savings").innerText = "Savings: R" + savings;
+  
+        const ctx = document.getElementById("financeChart").getContext("2d");
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: reports.map(r => r.month),
+            datasets: [
+              {
+                label: "Savings",
+                data: reports.map(r => r.savings),
+                borderColor: "green",
+                fill: false
+              },
+              {
+                label: "Income",
+                data: reports.map(r => r.income),
+                borderColor: "blue",
+                fill: false
+              },
+              {
+                label: "Expenses",
+                data: reports.map(r => r.expenses),
+                borderColor: "red",
+                fill: false
+              }
+            ]
+          }
+        });
+  
+        loading.remove();
+      } catch (err) {
+        console.error("Failed to load dashboard data", err);
+        loading.innerText = "❌ Failed to load data. Check server.";
+      }
+    }
+  
+    fetchStats();
+    setInterval(fetchStats, 30000); // every 30 seconds
+  </script>  
+</body>
+</html>
