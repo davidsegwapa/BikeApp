@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 const bikeRoutes = require("./routes/bikeRoutes");
-app.use("/api", bikeRoutes);
+app.use("/api/bikes", bikeRoutes);
 
 
 // Test route
